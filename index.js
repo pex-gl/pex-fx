@@ -4,6 +4,8 @@ require('./lib/Blit');
 require('./lib/Blur5');
 require('./lib/Downsample4');
 require('./lib/FXAA');
+require('./lib/CorrectGamma');
+require('./lib/TonemapReinhard');
 
 var globalFx;
 
