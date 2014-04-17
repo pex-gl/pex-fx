@@ -3,6 +3,7 @@ require('./lib/Render');
 require('./lib/Blit');
 require('./lib/Blur5');
 require('./lib/Downsample4');
+require('./lib/FXAA');
 
 var globalFx;
 
