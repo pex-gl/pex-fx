@@ -1,7 +1,10 @@
 var FXStage = require('./lib/FXStage');
 require('./lib/Render');
 require('./lib/Blit');
+require('./lib/Add');
+require('./lib/Blur3');
 require('./lib/Blur5');
+require('./lib/Downsample2');
 require('./lib/Downsample4');
 require('./lib/FXAA');
 require('./lib/CorrectGamma');
