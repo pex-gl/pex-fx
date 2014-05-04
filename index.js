@@ -10,6 +10,7 @@ require('./lib/Downsample4');
 require('./lib/FXAA');
 require('./lib/CorrectGamma');
 require('./lib/TonemapReinhard');
+require('./lib/Save');
 
 var globalFx;
 
