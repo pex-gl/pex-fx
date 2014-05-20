@@ -11,6 +11,7 @@ require('./lib/FXAA');
 require('./lib/CorrectGamma');
 require('./lib/TonemapReinhard');
 require('./lib/Save');
+require('./lib/Mult');
 
 var globalFx;
 
