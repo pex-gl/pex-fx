@@ -4,11 +4,14 @@ require('./lib/Blit');
 require('./lib/Add');
 require('./lib/Blur3');
 require('./lib/Blur5');
+require('./lib/Blur');
 require('./lib/Downsample2');
 require('./lib/Downsample4');
 require('./lib/FXAA');
 require('./lib/CorrectGamma');
 require('./lib/TonemapReinhard');
+require('./lib/Save');
+require('./lib/Mult');
 
 var globalFx;
 
