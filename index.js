@@ -19,3 +19,5 @@ module.exports = function() {
   globalFx.reset();
   return globalFx;
 };
+
+module.exports.FXStage = FXStage;
