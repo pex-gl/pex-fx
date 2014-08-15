@@ -28,6 +28,7 @@ const int samples = 3;
 const int rings = 5;
 
 uniform float strength;
+uniform float offset;
 
 vec2 rand(vec2 coord) {
   float noiseX = (fract(sin(dot(coord, vec2(12.9898,78.233))) * 43758.5453));
@@ -38,13 +39,12 @@ vec2 rand(vec2 coord) {
 float compareDepths( in float depth1, in float depth2 )
 {
   float depthTolerance = far / 5.0;
-  float occlusionTolerance = far / 200.0;
+  float occlusionTolerance = far / 100.0;
   float diff = (depth1 - depth2);
 
-  //if (depth1 == far) return 0.0;
   if (diff <= 0.0) return 0.0;
   if (diff > depthTolerance) return 0.0;
-  //if (diff < occlusionTolerance) return 0.0;
+  if (diff < occlusionTolerance) return 0.0;
 
   return 1.0;
 }
@@ -84,7 +84,7 @@ void main() {
     {
       if (j >= samples*i) break;
       float step = PI * 2.0 / (float(samples) * float(i));
-      float r = 3.0 * float(i);
+      float r = 4.0 * float(i);
       pw = r * (cos(float(j)*step));
       ph = r * (sin(float(j)*step)) * aspect;
       d = readDepth( vec2(texCoord.s + pw * w,texCoord.t + ph * h));
@@ -96,6 +96,8 @@ void main() {
   ao /= s;
   ao = clamp(ao, 0.0, 1.0);
   ao = 1.0 - ao;
+  ao = offset + (1.0 - offset) * ao;
+  ao = pow(ao, strength);
 
   vec3 black = vec3(0.0, 0.0, 0.0);
   vec3 treshold = vec3(0.2, 0.2, 0.2);
