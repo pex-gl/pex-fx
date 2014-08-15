@@ -12,6 +12,7 @@ require('./lib/CorrectGamma');
 require('./lib/TonemapReinhard');
 require('./lib/Save');
 require('./lib/Mult');
+require('./lib/SSAO');
 
 var globalFx;
 
