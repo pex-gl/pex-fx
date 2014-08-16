@@ -99,10 +99,6 @@ void main() {
   ao = offset + (1.0 - offset) * ao;
   ao = pow(ao, strength);
 
-  vec3 black = vec3(0.0, 0.0, 0.0);
-  vec3 treshold = vec3(0.2, 0.2, 0.2);
-
-  gl_FragColor = vec4(texCoord, 0.0, 1.0);
   gl_FragColor = vec4(ao, ao, ao, 1.0);
 }
 
