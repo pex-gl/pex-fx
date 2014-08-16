@@ -50,6 +50,7 @@ float compareDepths( in float depth1, in float depth2 )
 }
 
 //fron depth buf normalized z to linear (eye space) z
+//http://stackoverflow.com/questions/6652253/getting-the-true-z-value-from-the-depth-buffer
 float readDepth(vec2 coord) {
   float z_b = texture2D(depthMap, coord).r;
   float z_n = 2.0 * z_b - 1.0;
