@@ -12,7 +12,7 @@ require('./Downsample4');
 //require('./TonemapReinhard');
 //require('./Save');
 require('./Mult');
-//require('./SSAO');
+require('./SSAO');
 //
 //var globalFx;
 //

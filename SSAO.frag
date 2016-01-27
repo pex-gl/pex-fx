@@ -1,19 +1,6 @@
-//based on http://blenderartists.org/forum/showthread.php?184102-nicer-and-faster-SSAO and http://www.pasteall.org/12299
-#ifdef VERT
-
-attribute vec2 position;
-attribute vec2 texCoord;
-
-varying vec2 vTexCoord;
-
-void main() {
-  gl_Position = vec4(position, 0.0, 1.0);
-  vTexCoord = texCoord;
-}
-
+#ifdef GL_ES
+precision highp float;
 #endif
-
-#ifdef FRAG
 
 #define PI    3.14159265
 
@@ -102,5 +89,3 @@ void main() {
 
   gl_FragColor = vec4(ao, ao, ao, 1.0);
 }
-
-#endif
