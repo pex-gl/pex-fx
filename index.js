@@ -1,7 +1,7 @@
 var FXStage = require('./FXStage');
 require('./Render');
 require('./Blit');
-//require('./Add');
+require('./Add');
 //require('./Blur3');
 require('./Blur5');
 //require('./Blur');
@@ -11,7 +11,7 @@ require('./Downsample4');
 //require('./CorrectGamma');
 //require('./TonemapReinhard');
 //require('./Save');
-//require('./Mult');
+require('./Mult');
 //require('./SSAO');
 //
 //var globalFx;

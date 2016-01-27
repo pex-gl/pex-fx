@@ -56,7 +56,6 @@ FXStage.prototype.getRenderTarget = function(w, h, depth, bpp) {
     var res = this.resourceMgr.getResource('RenderTarget', resProps);
     var ctx = this.ctx;
     if (!res) {
-        console.log('getRenderTarget', w, h)
         var colorTex = ctx.createTexture2D(null, w, h, { magFilter: ctx.LINEAR, minFilter: ctx.LINEAR, type: ctx.UNSIGNED_BYTE });
         var colorAttachments = [{
             texture: colorTex
@@ -142,12 +141,14 @@ FXStage.prototype.drawFullScreenQuadAt = function(x, y, width, height, image, pr
         ctx.setViewport(x, y, width, height);
         ctx.bindMesh(this.fullscreenQuad.mesh);
         ctx.bindProgram(program);
-        if (program.hasUniform('imageSize')) {
-            var w = image.width || image.getWidth()
-            var h = image.height || image.getHeight()
-            program.setUniform('imageSize', [w, h]); //TODO: reuse imageSize array
+        if (image) {
+            if (program.hasUniform('imageSize')) {
+                var w = image.width || image.getWidth()
+                var h = image.height || image.getHeight()
+                program.setUniform('imageSize', [w, h]); //TODO: reuse imageSize array
+            }
+            ctx.bindTexture(image, 0);
         }
-        ctx.bindTexture(image, 0);
         ctx.drawMesh();
     ctx.popState(ctx.DEPTH_BIT | ctx.VIEWPORT_BIT | ctx.MESH_BIT | ctx.PROGRAM_BIT | ctx.TEXTURE_BIT);
 };
