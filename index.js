@@ -3,7 +3,7 @@ require('./Render');
 require('./Blit');
 //require('./Add');
 //require('./Blur3');
-//require('./Blur5');
+require('./Blur5');
 //require('./Blur');
 require('./Downsample2');
 require('./Downsample4');

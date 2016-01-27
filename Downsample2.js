@@ -15,15 +15,13 @@ FXStage.prototype.downsample2 = function (options) {
 
     var ctx = this.ctx;
 
-    ctx.pushState(ctx.PROGRAM_BIT | ctx.FRAMEBUFFER_BIT);
+    ctx.pushState(ctx.FRAMEBUFFER_BIT);
         ctx.bindFramebuffer(rt);
         ctx.setClearColor(0,0,0,0);
         ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
 
-        ctx.bindProgram(program);
-        program.setUniform('imageSize', [source.width, source.height]);
         this.drawFullScreenQuad(outputSize.width, outputSize.height, source, program);
-    ctx.popState(ctx.PROGRAM_BIT | ctx.FRAMEBUFFER_BIT);
+    ctx.popState(ctx.FRAMEBUFFER_BIT);
 
     return this.asFXStage(rt, 'downsample2');
 };

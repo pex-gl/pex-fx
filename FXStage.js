@@ -56,6 +56,7 @@ FXStage.prototype.getRenderTarget = function(w, h, depth, bpp) {
     var res = this.resourceMgr.getResource('RenderTarget', resProps);
     var ctx = this.ctx;
     if (!res) {
+        console.log('getRenderTarget', w, h)
         var colorTex = ctx.createTexture2D(null, w, h, { magFilter: ctx.LINEAR, minFilter: ctx.LINEAR, type: ctx.UNSIGNED_BYTE });
         var colorAttachments = [{
             texture: colorTex
@@ -95,15 +96,15 @@ FXStage.prototype.asFXStage = function(source, name) {
 };
 
 FXStage.prototype.getShader = function(vert, frag) {
-  var resProps = { vert: vert, frag: frag };
-  var res = this.resourceMgr.getResource('Program', resProps);
-  if (!res) {
-    var ctx = this.ctx;
-    var program = ctx.createProgram(vert, frag);
-    res = this.resourceMgr.addResource('Program', program, resProps);
-  }
-  res.used = true;
-  return res.obj;
+    var resProps = { vert: vert, frag: frag };
+    var res = this.resourceMgr.getResource('Program', resProps);
+    if (!res) {
+        var ctx = this.ctx;
+        var program = ctx.createProgram(vert, frag);
+        res = this.resourceMgr.addResource('Program', program, resProps);
+    }
+    res.used = true;
+    return res.obj;
 };
 
 FXStage.prototype.getSourceTexture = function(source) {
@@ -134,12 +135,18 @@ FXStage.prototype.drawFullScreenQuad = function(width, height, image, program) {
 
 FXStage.prototype.drawFullScreenQuadAt = function(x, y, width, height, image, program) {
     var ctx = this.ctx;
+    program = program || this.fullscreenQuad.program
     ctx.pushState(ctx.DEPTH_BIT | ctx.VIEWPORT_BIT | ctx.MESH_BIT | ctx.PROGRAM_BIT | ctx.TEXTURE_BIT);
         ctx.setDepthTest(false);
         ctx.setDepthMask(0);
         ctx.setViewport(x, y, width, height);
         ctx.bindMesh(this.fullscreenQuad.mesh);
-        ctx.bindProgram(this.fullscreenQuad.program);
+        ctx.bindProgram(program);
+        if (program.hasUniform('imageSize')) {
+            var w = image.width || image.getWidth()
+            var h = image.height || image.getHeight()
+            program.setUniform('imageSize', [w, h]); //TODO: reuse imageSize array
+        }
         ctx.bindTexture(image, 0);
         ctx.drawMesh();
     ctx.popState(ctx.DEPTH_BIT | ctx.VIEWPORT_BIT | ctx.MESH_BIT | ctx.PROGRAM_BIT | ctx.TEXTURE_BIT);
