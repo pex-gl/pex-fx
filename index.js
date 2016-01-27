@@ -2,7 +2,7 @@ var FXStage = require('./FXStage');
 require('./Render');
 require('./Blit');
 require('./Add');
-//require('./Blur3');
+require('./Blur3');
 require('./Blur5');
 //require('./Blur');
 require('./Downsample2');
