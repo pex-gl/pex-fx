@@ -1,22 +1,7 @@
-var VERT = '\
-attribute vec4 aPosition; \
-attribute vec2 aTexCoord0; \
-varying vec2 vTexCoord0; \
-void main() { \
-    vTexCoord0 = aTexCoord0; \
-    gl_Position = vec4(aPosition.xy, 0.0, 1.0); \
-}';
+var glslify = require('glslify-sync');
 
-//
-//
-
-
-var FRAG = '\
-varying vec2 vTexCoord0; \
-uniform sampler2D uTexture; \
-void main() { \
-    gl_FragColor = texture2D(uTexture, vTexCoord0); \
-}';
+var VERT = glslify(__dirname + '/ScreenImage.vert');
+var FRAG = glslify(__dirname + '/ScreenImage.frag');
 
 function ScreenImage(ctx) {
     this.mesh = ctx.createMesh([

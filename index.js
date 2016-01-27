@@ -1,18 +1,18 @@
 var FXStage = require('./FXStage');
 require('./Render');
 require('./Blit');
-//require('./lib/Add');
-//require('./lib/Blur3');
-//require('./lib/Blur5');
-//require('./lib/Blur');
-//require('./lib/Downsample2');
-//require('./lib/Downsample4');
-//require('./lib/FXAA');
-//require('./lib/CorrectGamma');
-//require('./lib/TonemapReinhard');
-//require('./lib/Save');
-//require('./lib/Mult');
-//require('./lib/SSAO');
+//require('./Add');
+//require('./Blur3');
+//require('./Blur5');
+//require('./Blur');
+require('./Downsample2');
+require('./Downsample4');
+//require('./FXAA');
+//require('./CorrectGamma');
+//require('./TonemapReinhard');
+//require('./Save');
+//require('./Mult');
+//require('./SSAO');
 //
 //var globalFx;
 //

@@ -22,7 +22,6 @@ FXResourceMgr.prototype.getResource = function(type, properties) {
 };
 
 FXResourceMgr.prototype.addResource = function(type, obj, properties) {
-    console.log('FXResourceMgr.addResource', type)
     var res = {
         type: type,
         obj: obj,

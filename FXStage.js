@@ -56,7 +56,6 @@ FXStage.prototype.getRenderTarget = function(w, h, depth, bpp) {
     var res = this.resourceMgr.getResource('RenderTarget', resProps);
     var ctx = this.ctx;
     if (!res) {
-        console.log('FXStage.getRenderTarget. Creating new.')
         var colorTex = ctx.createTexture2D(null, w, h, { magFilter: ctx.LINEAR, minFilter: ctx.LINEAR, type: ctx.UNSIGNED_BYTE });
         var colorAttachments = [{
             texture: colorTex
@@ -95,19 +94,17 @@ FXStage.prototype.asFXStage = function(source, name) {
     return stage;
 };
 
-//FXStage.prototype.getShader = function(code) {
-//  if (code.indexOf('.glsl') == code.length - 5) {
-//    throw 'FXStage.getShader - loading files not supported yet.';
-//  }
-//  var resProps = { code: code };
-//  var res = this.resourceMgr.getResource('Program', resProps);
-//  if (!res) {
-//    var program = new Program(code);
-//    res = this.resourceMgr.addResource('Program', program, resProps);
-//  }
-//  res.used = true;
-//  return res.obj;
-//};
+FXStage.prototype.getShader = function(vert, frag) {
+  var resProps = { vert: vert, frag: frag };
+  var res = this.resourceMgr.getResource('Program', resProps);
+  if (!res) {
+    var ctx = this.ctx;
+    var program = ctx.createProgram(vert, frag);
+    res = this.resourceMgr.addResource('Program', program, resProps);
+  }
+  res.used = true;
+  return res.obj;
+};
 
 FXStage.prototype.getSourceTexture = function(source) {
     if (source) {
