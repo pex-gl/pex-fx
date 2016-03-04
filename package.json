@@ -19,6 +19,7 @@
   "main": "index.js",
   "devDependencies": {},
   "dependencies": {
+    "glsl-fast-gaussian-blur": "^1.0.2",
     "glslify-sync": "^1.0.1"
   },
   "repository": {
