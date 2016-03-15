@@ -56,7 +56,10 @@ FXStage.prototype.getRenderTarget = function(w, h, depth, bpp) {
     var res = this.resourceMgr.getResource('RenderTarget', resProps);
     var ctx = this.ctx;
     if (!res) {
-        var colorTex = ctx.createTexture2D(null, w, h, { magFilter: ctx.LINEAR, minFilter: ctx.LINEAR, type: ctx.UNSIGNED_BYTE });
+        var type = ctx.UNSIGNED_BYTE;
+        if (bpp == 16) type = ctx.HALF_FLOAT;
+        if (bpp == 32) type = ctx.FLOAT;
+        var colorTex = ctx.createTexture2D(null, w, h, { magFilter: ctx.LINEAR, minFilter: ctx.LINEAR, type: type });
         var colorAttachments = [{
             texture: colorTex
         }]
