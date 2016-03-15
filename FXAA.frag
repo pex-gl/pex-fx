@@ -1,24 +1,6 @@
-#ifdef VERT
-
-float FXAA_SUBPIX_SHIFT = 1.0/4.0;
-
-uniform float rtWidth;
-uniform float rtHeight;
-attribute vec2 position;
-attribute vec2 texCoord;
-varying vec4 posPos;
-
-void main() {
-  gl_Position = vec4(position, 0.0, 1.0);
-
-  vec2 rcpFrame = vec2(1.0/rtWidth, 1.0/rtHeight);
-  posPos.xy = texCoord.xy;
-  posPos.zw = texCoord.xy - (rcpFrame * (0.5 + FXAA_SUBPIX_SHIFT));
-}
-
+#ifdef GL_ES
+precision highp float;
 #endif
-
-#ifdef FRAG
 
 #define FXAA_REDUCE_MIN   (1.0/ 128.0)
 #define FXAA_REDUCE_MUL   (1.0 / 8.0)
@@ -28,7 +10,6 @@ uniform sampler2D tex0;
 varying vec4 posPos;
 uniform float rtWidth;
 uniform float rtHeight;
-
 
 vec4 applyFXAA(vec2 fragCoord, sampler2D tex)
 {
@@ -162,5 +143,3 @@ void main()
 }
 
 */
-
-#endif
