@@ -14,6 +14,8 @@ require('./CorrectGamma');
 //require('./Save');
 require('./Mult');
 require('./SSAO');
+require('./RenderWrap');
+
 //
 //var globalFx;
 //
