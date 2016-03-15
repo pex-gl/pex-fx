@@ -20,6 +20,7 @@
   "devDependencies": {},
   "dependencies": {
     "glsl-fast-gaussian-blur": "^1.0.2",
+    "glsl-gamma": "^2.0.0",
     "glslify-sync": "^1.0.1"
   },
   "repository": {

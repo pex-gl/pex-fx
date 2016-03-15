@@ -9,7 +9,7 @@ require('./Downsample2');
 require('./Downsample4');
 require('./Image');
 //require('./FXAA');
-//require('./CorrectGamma');
+require('./CorrectGamma');
 //require('./TonemapReinhard');
 //require('./Save');
 require('./Mult');
