@@ -15,6 +15,7 @@ require('./CorrectGamma');
 require('./Mult');
 require('./SSAO');
 require('./RenderWrap');
+require('./Unpremultiply');
 
 //
 //var globalFx;
