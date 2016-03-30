@@ -1,6 +1,6 @@
 {
   "name": "pex-fx",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Postprocessing effects for the pex library",
   "homepage": "https://github.com/vorg/pex-fx.git",
   "keywords": [
