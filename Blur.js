@@ -1,8 +1,8 @@
 var FXStage = require('./FXStage');
-var glslify = require('glslify-sync');
+var fs = require('fs');
 
-var VERT = glslify(__dirname + '/ScreenImage.vert');
-var FRAG = glslify(__dirname + '/Blur.frag');
+var VERT = fs.readFileSync(__dirname + '/ScreenImage.vert', 'utf8');
+var FRAG = fs.readFileSync(__dirname + '/Blur.frag', 'utf8');
 
 
 FXStage.prototype.blur = function (options) {
@@ -28,7 +28,7 @@ FXStage.prototype.blur = function (options) {
         var src = (i == 0) ? source : readRT.getColorAttachment(0).texture;
 
         ctx.bindFramebuffer(writeRT);
-        ctx.setClearColor(0,0,1,1);
+        ctx.setClearColor(0,0,0,1);
         ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
         program.setUniform('direction', direction)
         this.drawFullScreenQuad(outputSize.width, outputSize.height, src, program);

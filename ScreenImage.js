@@ -1,7 +1,7 @@
-var glslify = require('glslify-sync');
+var fs = require('fs');
 
-var VERT = glslify(__dirname + '/ScreenImage.vert');
-var FRAG = glslify(__dirname + '/ScreenImage.frag');
+var VERT = fs.readFileSync(__dirname + '/ScreenImage.vert', 'utf8');
+var FRAG = fs.readFileSync(__dirname + '/ScreenImage.frag', 'utf8');
 
 function ScreenImage(ctx) {
     this.mesh = ctx.createMesh([

@@ -17,16 +17,23 @@
     "url": "http://marcinignac.com"
   },
   "main": "index.js",
-  "devDependencies": {},
+  "devDependencies": {
+    "glslify": "^5.0.2"
+  },
   "dependencies": {
+    "brfs": "^1.4.3",
     "glsl-fast-gaussian-blur": "^1.0.2",
-    "glsl-gamma": "^2.0.0",
-    "glslify-sync": "^1.0.1"
+    "glsl-gamma": "^2.0.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/vorg/pex-fx.git"
   },
   "bugs": "https://github.com/vorg/pex-fx/issues",
-  "license": "MIT"
+  "license": "MIT",
+  "browserify": {
+    "transform": [
+      "brfs"
+    ]
+  }
 }

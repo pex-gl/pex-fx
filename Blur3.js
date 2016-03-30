@@ -1,9 +1,9 @@
 var FXStage = require('./FXStage');
-var glslify = require('glslify-sync');
+var fs = require('fs');
 
-var VERT = glslify(__dirname + '/ScreenImage.vert');
-var FRAG_H = glslify(__dirname + '/Blur3H.frag');
-var FRAG_V = glslify(__dirname + '/Blur3V.frag');
+var VERT = fs.readFileSync(__dirname + '/ScreenImage.vert', 'utf8');
+var FRAG_H = fs.readFileSync(__dirname + '/Blur3H.frag', 'utf8');
+var FRAG_V = fs.readFileSync(__dirname + '/Blur3V.frag', 'utf8');
 
 
 FXStage.prototype.blur3 = function (options) {

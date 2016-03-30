@@ -1,8 +1,8 @@
 var FXStage = require('./FXStage');
-var glslify = require('glslify-sync');
+var fs = require('fs');
 
-var VERT = glslify(__dirname + '/FXAA.vert');
-var FRAG = glslify(__dirname + '/FXAA.frag');
+var VERT = fs.readFileSync(__dirname + '/FXAA.vert', 'utf8');
+var FRAG = fs.readFileSync(__dirname + '/FXAA.frag', 'utf8');
 
 FXStage.prototype.fxaa = function (options) {
   var ctx = this.ctx;

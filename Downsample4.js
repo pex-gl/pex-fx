@@ -1,8 +1,8 @@
 var FXStage = require('./FXStage');
-var glslify = require('glslify-sync');
+var fs = require('fs');
 
-var VERT = glslify(__dirname + '/ScreenImage.vert');
-var FRAG = glslify(__dirname + '/Downsample4.frag');
+var VERT = fs.readFileSync(__dirname + '/ScreenImage.vert', 'utf8');
+var FRAG = fs.readFileSync(__dirname + '/Downsample4.frag', 'utf8');
 
 FXStage.prototype.downsample4 = function (options) {
     options = options || {};
