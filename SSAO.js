@@ -1,37 +1,59 @@
-var FXStage = require('./FXStage');
-var fs = require('fs');
+var FXStage = require('./FXStage')
+var fs = require('fs')
 
-var VERT = fs.readFileSync(__dirname + '/ScreenImage.vert', 'utf8');
-var FRAG = fs.readFileSync(__dirname + '/SSAO.frag', 'utf8');
+var VERT = fs.readFileSync(__dirname + '/ScreenImage.vert', 'utf8')
+var FRAG = fs.readFileSync(__dirname + '/SSAO.frag', 'utf8')
 
 FXStage.prototype.ssao = function (options) {
-    var ctx = this.ctx;
-    options = options || {};
-    scale = options.scale !== undefined ? options.scale : 1;
-    var outputSize = this.getOutputSize(options.width, options.height);
-    var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
+  var regl = this.regl
+  options = options || {}
+  var outputSize = this.getOutputSize(options.width, options.height)
+  var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp)
 
-    var program = this.getShader(VERT, FRAG);
+  if (!this.cmd) {
+    // TODO: what if the viewport size / target output has changed?
+    // FIXME: i don't know how to pass my uniform to drawFullScreenQuad command,
+    // so i'm just doing all of it here
+    // how can i inject new uniforms if i don't know their name in the
+    // drawFullScreenQuad function, can cmd(props) take props.uniforms somehow?
+    this.cmd = regl({
+      attributes: this.fullscreenQuad.attributes,
+      elements: this.fullscreenQuad.elements,
+      framebuffer: rt,
+      viewport: { x: 0, y: 0, width: outputSize.width, height: outputSize.height },
+      vert: VERT,
+      frag: FRAG,
+      // TODO: move those params to regl.prop()
+      uniforms: {
+        textureSize: [outputSize.width, outputSize.height],
+        // depthMap: () => this.getSourceTexture(options.depthMap),
+        // normalMap: () => this.getSourceTexture(options.normalMap),
+        depthMap: () => options.depthMap,
+        normalMap: () => options.normalMap,
+        kernelMap: () => options.kernelMap,
+        noiseMap: () => options.noiseMap,
+        // program.setUniform('strength', options.strength || 1)
+        // program.setUniform('offset', options.offset || 0),
+        near: () => options.camera.near,
+        far: () => options.camera.far,
+        fov: () => options.camera.fov,
+        aspectRatio: () => options.camera.aspect,
+        radius: options.radius || 0.2,
+        uProjectionMatrix: () => options.camera.projectionMatrix,
+        uOffset: [0, 0],
+        uSize: [1, 1]
+      }
+    })
+  }
 
-    ctx.pushState(ctx.FRAMEBUFFER_BIT | ctx.TEXTURE_BIT | ctx.PROGRAM_BIT);
-        ctx.bindFramebuffer(rt);
-        ctx.setClearColor(0,0,0,0);
-        ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
+  this.cmd({
+  })
 
-        ctx.bindTexture(this.getSourceTexture(options.depthMap), 0)
+  return this.asFXStage(rt, 'ssao')
+}
 
-        ctx.bindProgram(program);
-        program.setUniform('textureSize', [outputSize.width, outputSize.height]);
-        program.setUniform('depthMap', 0);
-        program.setUniform('strength', options.strength || 1);
-        program.setUniform('offset', options.offset || 0);
-        program.setUniform('near', options.camera.getNear());
-        program.setUniform('far', options.camera.getFar());
+FXStage.prototype.ssao.updateFrag = function (src) {
+  FRAG = src
+}
 
-        this.drawFullScreenQuad(outputSize.width, outputSize.height, null, program);
-    ctx.popState(ctx.FRAMEBUFFER_BIT | ctx.TEXTURE_BIT | ctx.PROGRAM_BIT);
-
-    return this.asFXStage(rt, 'mult');
-};
-
-module.exports = FXStage;
+module.exports = FXStage

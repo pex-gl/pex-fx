@@ -1,24 +1,30 @@
 var FXStage = require('./FXStage');
 
-FXStage.prototype.beginRender = function (options) {
+var wrapCmd;
+FXStage.prototype.wrapRender = function (options, drawFunc) {
     options = options || {};
+    var regl = this.regl
     var outputSize = this.getOutputSize(options.width, options.height);
     var rt = this.getRenderTarget(outputSize.width, outputSize.height, options.depth, options.bpp);
 
     var ctx = this.ctx;
 
-    ctx.pushState(ctx.VIEWPORT_BIT | ctx.FRAMEBUFFER_BIT);
-        ctx.setViewport(0, 0, outputSize.width, outputSize.height);
-        ctx.bindFramebuffer(rt);
-        ctx.setClearColor(0,0,0,0);
-        ctx.clear(ctx.COLOR_BIT | ctx.DEPTH_BIT);
+  if (!wrapCmd) {
+    console.log('setup cmd')
+    // TODO: what if the viewport size / target output has changed?
+    // FIXME: i don't know how to pass my uniform to drawFullScreenQuad command,
+    // so i'm just doing all of it here
+    // how can i inject new uniforms if i don't know their name in the
+    // drawFullScreenQuad function, can cmd(props) take props.uniforms somehow?
+    wrapCmd = regl({
+      framebuffer: rt,
+      viewport: { x: 0, y: 0, width: outputSize.width, height: outputSize.height },
+    })
+  }
 
-    return this.asFXStage(rt, 'render');
+  wrapCmd(drawFunc)
+
+  return this.asFXStage(rt, 'render');
 };
-
-FXStage.prototype.endRender = function () {
-    var ctx = this.ctx;
-    ctx.popState(ctx.VIEWPORT_BIT | ctx.FRAMEBUFFER_BIT);
-}
 
 module.exports = FXStage;

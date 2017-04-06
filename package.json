@@ -23,7 +23,9 @@
   "dependencies": {
     "brfs": "^1.4.3",
     "glsl-fast-gaussian-blur": "^1.0.2",
-    "glsl-gamma": "^2.0.0"
+    "glsl-gamma": "^2.0.0",
+    "pex-materials": "^1.1.1",
+    "pex-math": "^1.0.1"
   },
   "repository": {
     "type": "git",

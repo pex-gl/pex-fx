@@ -16,6 +16,7 @@ require('./Mult');
 require('./SSAO');
 require('./RenderWrap');
 require('./Unpremultiply');
+require('./BilateralBlur');
 
 //
 //var globalFx;
@@ -28,8 +29,8 @@ require('./Unpremultiply');
 //  return globalFx;
 //};
 
-module.exports = function(ctx) {
-    return new FXStage(ctx);
+module.exports = function (regl) {
+  return new FXStage(regl)
 }
 
-module.exports.FXStage = FXStage;
+module.exports.FXStage = FXStage

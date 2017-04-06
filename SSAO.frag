@@ -7,34 +7,16 @@ precision highp float;
 varying vec2 vTexCoord;
 
 uniform sampler2D depthMap;
+uniform sampler2D normalMap;
+uniform sampler2D kernelMap;
+uniform sampler2D noiseMap;
 uniform vec2 textureSize;
 uniform float near;
 uniform float far;
-
-const int samples = 3;
-const int rings = 5;
-
-uniform float strength;
-uniform float offset;
-
-vec2 rand(vec2 coord) {
-  float noiseX = (fract(sin(dot(coord, vec2(12.9898,78.233))) * 43758.5453));
-  float noiseY = (fract(sin(dot(coord, vec2(12.9898,78.233) * 2.0)) * 43758.5453));
-  return vec2(noiseX,noiseY) * 0.004;
-}
-
-float compareDepths( in float depth1, in float depth2 )
-{
-  float depthTolerance = far / 5.0;
-  float occlusionTolerance = far / 100.0;
-  float diff = (depth1 - depth2);
-
-  if (diff <= 0.0) return 0.0;
-  if (diff > depthTolerance) return 0.0;
-  if (diff < occlusionTolerance) return 0.0;
-
-  return 1.0;
-}
+uniform float aspectRatio;
+uniform float fov;
+uniform mat4 uProjectionMatrix;
+uniform float radius;
 
 //fron depth buf normalized z to linear (eye space) z
 //http://stackoverflow.com/questions/6652253/getting-the-true-z-value-from-the-depth-buffer
@@ -45,47 +27,80 @@ float readDepth(vec2 coord) {
   return z_e;
 }
 
+vec3 getFarViewDir(vec2 tc) {
+  float hfar = 2.0 * tan(fov / 2.0) * far;
+  float wfar = hfar * aspectRatio;
+  vec3 dir = (vec3(wfar * (tc.x - 0.5), hfar * (tc.y - 0.5), -far));
+  return dir;
+}
+
+vec3 getViewRay(vec2 tc) {
+  vec3 ray = normalize(getFarViewDir(tc));
+  return ray;
+}
+
+//asumming z comes from depth buffer (ndc coords) and it's not a linear distance from the camera but
+//perpendicular to the near/far clipping planes
+//http://mynameismjp.wordpress.com/2010/09/05/position-from-depth-3/
+//assumes z = eye space z
+vec3 reconstructPositionFromDepth(vec2 texCoord, float z) {
+  vec3 ray = getFarViewDir(texCoord);
+  vec3 pos = ray;
+  return pos * z / far;
+}
+
 void main() {
   vec2 texCoord = vec2(gl_FragCoord.x / textureSize.x, gl_FragCoord.y / textureSize.y);
+
+  // depth is coming from a depth buffer, so always positive value
   float depth = readDepth(texCoord);
-  float z_b = texture2D(depthMap, texCoord).r;
 
-  float d;
-
-  float aspect = textureSize.x / textureSize.y;
-  vec2 noise = rand(vTexCoord);
-
-  float w = (1.0 / textureSize.x)/clamp(z_b,0.1,1.0)+(noise.x*(1.0-noise.x));
-  float h = (1.0 / textureSize.y)/clamp(z_b,0.1,1.0)+(noise.y*(1.0-noise.y));
-
-  float pw;
-  float ph;
-
-  float ao = 0.0;
-  float s = 0.0;
-  float fade = 4.0;
-
-  for (int i = 0 ; i < rings; i += 1)
-  {
-    fade *= 0.5;
-    for (int j = 0 ; j < samples*rings; j += 1)
-    {
-      if (j >= samples*i) break;
-      float step = PI * 2.0 / (float(samples) * float(i));
-      float r = 4.0 * float(i);
-      pw = r * (cos(float(j)*step));
-      ph = r * (sin(float(j)*step)) * aspect;
-      d = readDepth( vec2(texCoord.s + pw * w,texCoord.t + ph * h));
-      ao += compareDepths(depth, d) * fade;
-      s += 1.0 * fade;
-    }
+  // make background full white
+  if (depth >= far * 0.99) {
+      gl_FragColor = vec4(1.0);
+      return;
   }
 
-  ao /= s;
-  ao = clamp(ao, 0.0, 1.0);
-  ao = 1.0 - ao;
-  ao = offset + (1.0 - offset) * ao;
-  ao = pow(ao, strength);
+  vec2 noiseScale = vec2(textureSize.x/4.0, textureSize.y/4.0); // screen = 800x600
 
-  gl_FragColor = vec4(ao, ao, ao, 1.0);
+  vec3 normal = normalize(texture2D(normalMap, texCoord).rgb * 2.0 - vec3(1.0));
+
+  vec3 fragPos = reconstructPositionFromDepth(texCoord, depth);
+
+  vec3 randomVec = texture2D(noiseMap, texCoord * noiseScale).xyz;
+  vec3 dirVec = texture2D(kernelMap, texCoord * noiseScale).xyz;
+
+  vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
+  vec3 bitangent = cross(normal, tangent);
+  mat3 TBN = mat3(tangent, bitangent, normal);
+
+  float occlusion = 0.0;
+  const float kernelWidth = 8.0;
+  const int kernelSize = 64;
+  vec3 lastSample = vec3(0.0);
+  for(int i = 0; i < kernelSize; ++i) {
+    vec2 tc = vec2(
+      mod(float(i), kernelWidth) / kernelWidth + 0.5 / kernelWidth,
+      floor(float(i) / kernelWidth) / kernelWidth + 0.5 / kernelWidth
+    );
+    // get sample position
+    vec3 sample = TBN * texture2D(kernelMap, tc).rgb; // From tangent to view-space
+    sample = fragPos + sample * radius;
+
+    vec4 offset = vec4(sample, 1.0);
+    offset = uProjectionMatrix * offset; // from view to clip-space
+    offset.xyz /= offset.w; // perspective divide
+    offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0
+
+    // we will compare to z in view space which is negative
+    float sampleDepth = -readDepth(offset.xy);
+
+    //removes outline halos
+    float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
+    occlusion += ((sampleDepth >= sample.z) ? 1.0 : 0.0) * rangeCheck;
+  }
+
+  occlusion = 1.0 - (occlusion / float(kernelSize));
+
+  gl_FragColor = vec4(occlusion, occlusion, occlusion, 1.0);
 }
